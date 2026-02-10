@@ -56,7 +56,7 @@ export async function loadAndRender(containerSelector, onClickCb) {
       return quizzablePolygons.has(id) ? 'country quizzable' : 'country non-quizzable';
     })
     .attr('d', pathGen)
-    .attr('data-id', d => d.id)
+    .attr('data-id', d => Number(d.id))
     .on('click', function (event, d) {
       const id = Number(d.id);
       if (quizzablePolygons.has(id) && onClick) {
