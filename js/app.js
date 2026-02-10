@@ -82,10 +82,11 @@ async function startGame(config) {
   // Submit button
   document.getElementById('submit-btn').onclick = handleSubmit;
 
-  // Enter key on input (only if autocomplete is not active)
+  // Enter key always submits what's in the input
   guessInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && !acDropdown.classList.contains('visible')) {
+    if (e.key === 'Enter') {
       e.preventDefault();
+      autocomplete.hide();
       handleSubmit();
     }
   });

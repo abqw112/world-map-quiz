@@ -71,9 +71,6 @@ function onKeydown(e) {
     e.preventDefault();
     activeIndex = Math.max(activeIndex - 1, 0);
     render();
-  } else if (e.key === 'Enter' && activeIndex >= 0) {
-    e.preventDefault();
-    selectItem(items[activeIndex]);
   } else if (e.key === 'Escape') {
     hide();
   }
