@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>World Map Quiz</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+  <script src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
+</head>
+<body>
+
+  <!-- Header -->
+  <header id="header">
+    <div class="header-title">World Map Quiz</div>
+    <div class="header-stats">
+      <div class="stat">
+        <span class="stat-label">Lives</span>
+        <span id="lives-display"></span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Score</span>
+        <span id="score-display">0/197</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Time</span>
+        <span id="timer-display">0:00</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Layout -->
+  <div id="main">
+
+    <!-- Sidebar -->
+    <aside id="sidebar">
+      <div id="sidebar-regions"></div>
+      <div class="zoom-controls">
+        <button id="zoom-in" title="Zoom in">+</button>
+        <button id="zoom-out" title="Zoom out">&minus;</button>
+        <button id="zoom-reset" title="Reset zoom">&#x27F2;</button>
+      </div>
+      <button id="give-up-btn" class="give-up-btn">Give Up</button>
+    </aside>
+
+    <!-- Map Area -->
+    <div id="map-area">
+      <div id="map-container"></div>
+
+      <!-- Input Bar -->
+      <div id="input-bar">
+        <span id="selected-name">Click a country on the map</span>
+        <div class="input-row">
+          <div class="input-wrapper">
+            <input type="text" id="guess-input" placeholder="Type country name..." autocomplete="off" disabled>
+            <div id="ac-dropdown" class="ac-dropdown"></div>
+          </div>
+          <button id="submit-btn" disabled>&#x2713;</button>
+        </div>
+      </div>
+      <div id="feedback" class="feedback"></div>
+    </div>
+  </div>
+
+  <!-- Start Modal -->
+  <div id="start-modal" class="modal-overlay">
+    <div class="modal">
+      <h2>World Map Quiz</h2>
+      <p>Name every country in the world! Click a country on the map, then type its name.</p>
+
+      <div class="modal-options">
+        <div class="option-group">
+          <label for="lives-select">Lives</label>
+          <select id="lives-select">
+            <option value="3">3 lives</option>
+            <option value="5">5 lives</option>
+            <option value="10">10 lives</option>
+            <option value="inf">Unlimited</option>
+          </select>
+        </div>
+        <div class="option-group">
+          <label for="time-select">Time Limit</label>
+          <select id="time-select">
+            <option value="0">No limit</option>
+            <option value="10">10 minutes</option>
+            <option value="20">20 minutes</option>
+            <option value="30">30 minutes</option>
+          </select>
+        </div>
+      </div>
+
+      <button id="start-btn" class="primary-btn">Start Quiz</button>
+    </div>
+  </div>
+
+  <!-- End Modal -->
+  <div id="end-modal" class="modal-overlay">
+    <div class="modal">
+      <h2 id="end-title">Game Over</h2>
+      <p id="end-subtitle"></p>
+      <div class="end-stats">
+        <div class="end-stat">
+          <span class="end-stat-label">Score</span>
+          <span id="end-score">0/197</span>
+        </div>
+        <div class="end-stat">
+          <span class="end-stat-label">Time</span>
+          <span id="end-time">0:00</span>
+        </div>
+      </div>
+      <div id="end-regions" class="end-regions"></div>
+      <button id="play-again-btn" class="primary-btn">Play Again</button>
+    </div>
+  </div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
