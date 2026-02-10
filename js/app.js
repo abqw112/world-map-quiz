@@ -82,9 +82,9 @@ async function startGame(config) {
   // Submit button
   document.getElementById('submit-btn').onclick = handleSubmit;
 
-  // Enter key always submits what's in the input
+  // Enter key submits what's in the input (unless autocomplete already handled it)
   guessInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
+    if (e.key === 'Enter' && !e.defaultPrevented) {
       e.preventDefault();
       autocomplete.hide();
       handleSubmit();
