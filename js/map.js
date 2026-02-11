@@ -1,15 +1,16 @@
 // js/map.js — D3 map rendering, zoom/pan, click handling
 
-import { buildQuizzableList, MICROSTATE_COORDS, REGIONS, getRegion } from './data.js';
+import { buildQuizzableList, MICROSTATE_COORDS, REGIONS, getRegion, getDisplayName } from './data.js';
 
 /* global d3, topojson */
 
-let svg, g, projection, pathGen, zoom;
+let svg, g, projection, pathGen, zoom, tooltip;
 let quizzablePolygons = new Map(); // id → feature
 let microstateIds = [];
 let allGeoFeatures = [];
 let onClick = null; // callback(countryId)
 let currentTransform = d3.zoomIdentity;
+let guessedIds = new Set();
 
 const TOPO_URL = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json';
 
@@ -29,6 +30,9 @@ export async function loadAndRender(containerSelector, onClickCb) {
     .attr('viewBox', `0 0 ${width} ${height}`);
 
   g = svg.append('g');
+
+  // Create tooltip div
+  tooltip = container.append('div').attr('class', 'map-tooltip');
 
   // Set up projection
   projection = d3.geoNaturalEarth1();
@@ -62,6 +66,18 @@ export async function loadAndRender(containerSelector, onClickCb) {
       if (quizzablePolygons.has(id) && onClick) {
         onClick(id);
       }
+    })
+    .on('mousemove', function (event, d) {
+      const id = Number(d.id);
+      if (guessedIds.has(id)) {
+        const name = getDisplayName(id);
+        tooltip.text(name).classed('visible', true)
+          .style('left', (event.offsetX + 12) + 'px')
+          .style('top', (event.offsetY - 24) + 'px');
+      }
+    })
+    .on('mouseleave', function () {
+      tooltip.classed('visible', false);
     });
 
   // Render microstate circle markers (on top of polygons for small countries)
@@ -77,6 +93,17 @@ export async function loadAndRender(containerSelector, onClickCb) {
     .on('click', function (event, d) {
       event.stopPropagation();
       if (onClick) onClick(d);
+    })
+    .on('mousemove', function (event, d) {
+      if (guessedIds.has(d)) {
+        const name = getDisplayName(d);
+        tooltip.text(name).classed('visible', true)
+          .style('left', (event.offsetX + 12) + 'px')
+          .style('top', (event.offsetY - 24) + 'px');
+      }
+    })
+    .on('mouseleave', function () {
+      tooltip.classed('visible', false);
     });
 
   // Set up zoom
@@ -113,6 +140,7 @@ export function selectCountry(countryId) {
  * Mark a country as correctly guessed (region color)
  */
 export function markGuessed(countryId) {
+  guessedIds.add(countryId);
   const region = getRegion(countryId);
   const color = region ? REGIONS[region].color : '#888';
 
