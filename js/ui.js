@@ -167,9 +167,10 @@ export function hideEndModal() {
 
 export function showSelectedCountry(countryId) {
   if (countryId == null) {
-    els.selectedName.textContent = 'Click a country on the map';
+    els.selectedName.textContent = 'Click a country on the map (press R for random)';
     els.guessInput.disabled = true;
     els.submitBtn.disabled = true;
+    els.guessInput.blur();
     return;
   }
   els.selectedName.textContent = 'Which country is this?';

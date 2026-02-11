@@ -157,6 +157,46 @@ export function deselectAll() {
   g.selectAll('.selected').classed('selected', false);
 }
 
+/**
+ * Smoothly zoom/pan to center a country. Zoom level is based on the
+ * country's bounding box so that it's clearly visible but neighboring
+ * countries remain in view.
+ */
+export function zoomToCountry(countryId) {
+  const svgNode = svg.node();
+  const { width, height } = svgNode.viewBox.baseVal;
+
+  // Try to get bounds from the polygon path
+  const pathEl = g.select(`path[data-id="${countryId}"]`);
+  let cx, cy, bbox;
+
+  if (!pathEl.empty()) {
+    bbox = pathEl.node().getBBox();
+  } else if (MICROSTATE_COORDS[countryId]) {
+    // Microstate with no polygon — use projected coords
+    const [px, py] = projection(MICROSTATE_COORDS[countryId]);
+    bbox = { x: px - 5, y: py - 5, width: 10, height: 10 };
+  } else {
+    return;
+  }
+
+  cx = bbox.x + bbox.width / 2;
+  cy = bbox.y + bbox.height / 2;
+
+  // Calculate zoom: fit the country bbox with generous padding (3x–5x the bbox)
+  // so you can see neighbors, clamped to [2, 8]
+  const pad = 4;
+  const scaleX = width / (bbox.width * pad);
+  const scaleY = height / (bbox.height * pad);
+  const k = Math.min(Math.max(Math.min(scaleX, scaleY), 2), 8);
+
+  const tx = width / 2 - cx * k;
+  const ty = height / 2 - cy * k;
+
+  const transform = d3.zoomIdentity.translate(tx, ty).scale(k);
+  svg.transition().duration(800).call(zoom.transform, transform);
+}
+
 export function zoomIn() {
   svg.transition().duration(300).call(zoom.scaleBy, 1.5);
 }

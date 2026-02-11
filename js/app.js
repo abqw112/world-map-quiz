@@ -91,6 +91,26 @@ async function startGame(config) {
     }
   });
 
+  // 'R' key: randomly select an unguessed country and zoom to it
+  document.addEventListener('keydown', (e) => {
+    // Ignore if typing in an input
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    if (e.key.toLowerCase() !== 'r') return;
+    if (state.status !== 'playing') return;
+    if (state.selectedCountryId != null) return;
+    e.preventDefault();
+
+    const allIds = getAllCountryIds();
+    const unguessed = allIds.filter(id => !state.guessedCountries.has(id));
+    if (unguessed.length === 0) return;
+    const randomId = unguessed[Math.floor(Math.random() * unguessed.length)];
+    game.selectCountry(randomId);
+    map.selectCountry(randomId);
+    map.zoomToCountry(randomId);
+    ui.showSelectedCountry(randomId);
+    autocomplete.clear();
+  });
+
   // Zoom controls
   document.getElementById('zoom-in').onclick = map.zoomIn;
   document.getElementById('zoom-out').onclick = map.zoomOut;
